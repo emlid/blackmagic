@@ -18,36 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Provides main entry point.  Initialise subsystems and enter GDB
- * protocol loop.
- */
+#ifndef __GPIO_H
+#define __GPIO_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <assert.h>
+#include <stdint.h>
+#include <stdbool.h>
 
-#include "gdb_if.h"
-#include "gdb_main.h"
-#include "jtagtap.h"
-#include "jtag_scan.h"
+extern int gpio_enable(uint8_t pin);
+extern int gpio_direction(uint8_t pin, bool output);
+extern int gpio_set_value(uint8_t pin, bool value);
+extern int gpio_set(uint8_t pin);
+extern int gpio_clear(uint8_t pin);
+extern bool gpio_get(uint8_t pin);
 
-#include "target.h"
-
-int
-main(int argc, char **argv)
-{
-#if defined(LIBFTDI) || defined(BBB)
-	assert(platform_init(argc, argv) == 0);
-#else
-	(void) argc;
-	(void) argv;
-	assert(platform_init() == 0);
-#endif
-	PLATFORM_SET_FATAL_ERROR_RECOVERY();
-
-	gdb_main();
-
-	/* Should never get here */
-	return 0;
-}
-
+#endif /* __GPIO_H */
