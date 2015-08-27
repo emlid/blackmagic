@@ -18,18 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GDB_IF_H
-#define __GDB_IF_H
+#ifndef __PLATFORM_H
+#define __PLATFORM_H
 
-#if !defined(LIBFTDI) && !defined(BBB) && !defined(RPI2)
-#include <libopencm3/usb/usbd.h>
-void gdb_usb_out_cb(usbd_device *dev, uint8_t ep);
+#include <stdint.h>
+
+#define SET_RUN_STATE(state)
+#define SET_IDLE_STATE(state)
+#define SET_ERROR_STATE(state)
+
+#define PLATFORM_FATAL_ERROR(error)	abort()
+#define PLATFORM_SET_FATAL_ERROR_RECOVERY()
+
+#define GPIO_SWDCLK 18
+#define GPIO_SWDIO 17
+
+#define morse_msg 0
+
+#define SWDIO_MODE_FLOAT() \
+    gpio_direction(GPIO_SWDIO, false);
+#define SWDIO_MODE_DRIVE() \
+    gpio_direction(GPIO_SWDIO, true);
+
+int platform_init(int argc, char **argv);
+void morse(const char *msg, char repeat);
+const char *platform_target_voltage(void);
+void platform_delay(uint32_t delay);
+
+void platform_buffer_flush(void);
+int platform_buffer_write(const uint8_t *data, int size);
+int platform_buffer_read(uint8_t *data, int size);
+
 #endif
-
-int gdb_if_init(void);
-unsigned char gdb_if_getchar(void);
-unsigned char gdb_if_getchar_to(int timeout);
-void gdb_if_putchar(unsigned char c, int flush);
-
-#endif
-
